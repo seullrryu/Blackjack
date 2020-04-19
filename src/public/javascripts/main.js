@@ -14,36 +14,41 @@ function main() {
         let user = []; 
         let computer = []; 
         
+        console.log(deck); 
+
         computer.push(deck.shift());
         user.push(deck.shift());
         computer.push(deck.shift());
         user.push(deck.shift());
 
+
+        console.log(computer); 
+        console.log(user);
         //Get <div class="game">
         const game = document.querySelector(".game"); 
 
 
         //<div class="computer"> 
-        const computer = document.createElement("div"); 
-        computer.setAttribute("class", 'computer'); 
+        const computerSection = document.createElement("section"); 
+        computerSection.setAttribute("class", 'computer'); 
 
         //<h3>Computer Score</h3> 
         const computerScore = document.createElement("h3"); 
         computerScore.appendChild(document.createTextNode("Computer Score - ?"));
-        computer.appendChild(computerScore); 
+        computerSection.appendChild(computerScore); 
 
-        game.appendChild(computer)
+        game.appendChild(computerSection)
 
         //<div class="user"> 
-        const user = document.createElement("div"); 
-        user.setAttribute("class", 'user'); 
+        const userSection = document.createElement("section"); 
+        userSection.setAttribute("class", 'user'); 
 
         //<h3>user score</h3>
         const userScore = document.createElement("h3"); 
-        useScore.appendChild(document.createTextNode("User Score - ?"));
-        user.appendChild(userScore); 
+        userScore.appendChild(document.createTextNode("User Score - ?"));
+        userSection.appendChild(userScore); 
 
-        game.appendChild(user); 
+        game.appendChild(userSection); 
         
 
         //Create <div class="buttons"> 
@@ -57,6 +62,11 @@ function main() {
         const hit = document.createElement('button');
         hit.appendChild(document.createTextNode("Hit"));
         buttons.appendChild(hit); 
+
+        game.appendChild(buttons);
+
+        display(computer, computerSection); 
+        display(user, userSection);
     }); 
 }
 function generateDeck(array) {
@@ -107,20 +117,21 @@ function generateDeck(array) {
             }
         }
     }
+    console.log(top);
 
     for (let i = 1; i <= 52; i++){
         let card = "";
         //Jack
         if (i % 13 === 11) {
-            card = "jack_of_" + suits[Math.floor((i - 1)/13)] + "2.png";
+            card = "jack_of_" + suits[Math.floor((i - 1)/13)] + ".png";
         } 
         //Queen
         else if (i % 13 === 12) {
-            card = "queen_of_" + suits[Math.floor((i - 1)/13)] + "2.png";
+            card = "queen_of_" + suits[Math.floor((i - 1)/13)] + ".png";
         } 
         //King
         else if (i % 13 === 0) {
-            card = "king_of_" + suits[Math.floor((i - 1)/13)] + "2.png";
+            card = "king_of_" + suits[Math.floor((i - 1)/13)] + ".png";
         } 
         //Ace (When i is 1 or 14)
         else if (i % 13 === 1) {
@@ -128,7 +139,7 @@ function generateDeck(array) {
         } 
         //Everything else 
         else {
-            card = i % 13 + "_of_" + suits[Math.floor((i - 1)/13)] + ".png";
+            card = (i%13) + "_of_" + suits[Math.floor((i - 1)/13)] + ".png";
         }
 
         //If these cards are not on the top of the deck
@@ -136,7 +147,7 @@ function generateDeck(array) {
             cards.push(card);
         }
     }
-    shuffle(cards);
+    // shuffle(cards);
     return top.concat(cards);
 }
 function shuffle(cards) {
@@ -145,8 +156,29 @@ function shuffle(cards) {
     let temp; 
     for (i = cards.length - 1; i > 0; i --) {
         j = Math.floor(Math.random() * (i + 1))
-        temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
+        temp = cards[i];
+        cards[i] = cards[j];
+        cards[j] = temp;
+    }
+}
+function display(cards, div) {
+    if (div.getAttribute('class') === "computer") {
+        cards.forEach((card) => {
+            const img = document.createElement('img');
+            if (cards.indexOf(card) !== 0){
+                img.setAttribute('src', '../cards/card_back.png');
+            } 
+            else {
+                img.setAttribute('src', '../cards/' + card);
+            }
+            div.appendChild(img);
+        });
+    } 
+    else {
+        cards.forEach((card) => {
+            const img = document.createElement('img');
+            img.setAttribute('src', '../cards/' + card);
+            div.appendChild(img);
+        });
     }
 }
