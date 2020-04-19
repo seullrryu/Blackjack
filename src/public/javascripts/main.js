@@ -45,7 +45,7 @@ function main() {
 
         //<h3>user score</h3>
         const userScore = document.createElement("h3"); 
-        userScore.appendChild(document.createTextNode("User Score - ?"));
+        userScore.appendChild(document.createTextNode("User Score - " + score(user)));
         userSection.appendChild(userScore); 
 
         game.appendChild(userSection); 
@@ -70,51 +70,17 @@ function main() {
     }); 
 }
 function generateDeck(array) {
-    const suits = ["clubs", "diamonds", "hearts", "spades"];
+    const suits = ["C", "D", "H", "S"];
     const cards = [];
     const top = [];
 
     for (let i = 0; i < array.length; i++) {
         const suit = suits[Math.floor(Math.random() * 4)];
-        if (array[i] === "J") {
-            if (top.indexOf("jack_of_" + suit + ".png") === -1){
-                top.push("jack_of_" + suit + ".png");
-            } 
-            else {
-                i--; 
-            }
-        } 
-        else if (array[i] === "Q"){
-            if (top.indexOf("queen_of_" + suit + ".png") === -1){
-                top.push("queen_of_" + suit + ".png");
-            } 
-            else {
-                i--; 
-            }
-        } 
-        else if (array[i] === "K"){
-            if (top.indexOf("king_of_" + suit + ".png") === -1){
-                top.push("king_of_" + suit + ".png");
-            } 
-            else {
-                i--; 
-            }
-        } 
-        else if (array[i] === "A") {
-            if (top.indexOf("ace_of_" + suit + ".png") === -1){
-                top.push("ace_of_" + suit + ".png");
-            } 
-            else {
-                i--; 
-            }
+        if (top.indexOf(array[i] + suit + ".png") === -1){
+            top.push(array[i] + suit + ".png");
         } 
         else {
-            if (top.indexOf(array[i] + "_of_" + suit + ".png") === -1){
-                top.push(array[i] + "_of_" + suit + ".png");
-            } 
-            else {
-                i--; 
-            }
+            i--; 
         }
     }
     console.log(top);
@@ -123,23 +89,23 @@ function generateDeck(array) {
         let card = "";
         //Jack
         if (i % 13 === 11) {
-            card = "jack_of_" + suits[Math.floor((i - 1)/13)] + ".png";
+            card = "J" + suits[Math.floor((i - 1)/13)] + ".png";
         } 
         //Queen
         else if (i % 13 === 12) {
-            card = "queen_of_" + suits[Math.floor((i - 1)/13)] + ".png";
+            card = "Q" + suits[Math.floor((i - 1)/13)] + ".png";
         } 
         //King
         else if (i % 13 === 0) {
-            card = "king_of_" + suits[Math.floor((i - 1)/13)] + ".png";
+            card = "K" + suits[Math.floor((i - 1)/13)] + ".png";
         } 
         //Ace (When i is 1 or 14)
         else if (i % 13 === 1) {
-            card = "ace_of_" + suits[Math.floor((i - 1)/13)] + ".png";
+            card = "A" + suits[Math.floor((i - 1)/13)] + ".png";
         } 
         //Everything else 
         else {
-            card = (i%13) + "_of_" + suits[Math.floor((i - 1)/13)] + ".png";
+            card = (i%13) + suits[Math.floor((i - 1)/13)] + ".png";
         }
 
         //If these cards are not on the top of the deck
@@ -161,8 +127,8 @@ function shuffle(cards) {
         cards[j] = temp;
     }
 }
-function display(cards, div) {
-    if (div.getAttribute('class') === "computer") {
+function display(cards, section) {
+    if (section.getAttribute('class') === "computer") {
         cards.forEach((card) => {
             const img = document.createElement('img');
             if (cards.indexOf(card) !== 0){
@@ -171,14 +137,49 @@ function display(cards, div) {
             else {
                 img.setAttribute('src', '../cards/' + card);
             }
-            div.appendChild(img);
+            section.appendChild(img);
         });
     } 
     else {
         cards.forEach((card) => {
             const img = document.createElement('img');
             img.setAttribute('src', '../cards/' + card);
-            div.appendChild(img);
+            section.appendChild(img);
         });
     }
+}
+function score(hand) {
+    let score = 0;
+    let aces = 0;
+    hand.forEach((card) => {
+        const value = card.charAt(0);
+        if (value === "J" || value === "Q" || value === "K") {
+            score += 10;
+        } 
+        else if (value === "A") {
+            aces++;
+        } 
+        else {
+            score += parseInt(value);
+        }
+    });
+
+    if (aces === 1) { 
+        if (score + 11 > 21){
+            score++;
+        } 
+        else {
+            score += 11;
+        }
+    } 
+    else if (aces >= 2) {
+        score += (aces - 1);
+        if (score + 11 > 21) {
+            score++;
+        } 
+        else {
+            score += 11;
+        }
+    }
+    return score;
 }
