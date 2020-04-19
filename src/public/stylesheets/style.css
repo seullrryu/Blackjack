@@ -1,11 +1,30 @@
+body {
+    background-color: #6cc98b;
+}
+form {
+    width: 30%;
+    line-height: 200px;
+    background: #fafafa;
+    margin-top: 200px;
+    margin-left: auto; 
+    margin-right: auto;
+    text-align: center;
+    height: 200px;
+}
 .game {
     width: 50%; 
     margin-left: auto; 
     margin-right: auto;
     text-align: center;
 }
+.game {
+    position: absolute; 
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+}
 .game section > img {
     width: 200px;
+    height: 300px;
 }
 img:hover {
     background: yellow;

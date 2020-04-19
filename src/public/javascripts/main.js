@@ -7,6 +7,7 @@ function main() {
         let form = document.querySelector(".start"); 
         event.preventDefault();
         form.style.display = "none";
+
         array = document.getElementById("startValues").value.split(',');
 
         //Generate a Deck of Cards and Deal Cards
@@ -14,16 +15,11 @@ function main() {
         let user = []; 
         let computer = []; 
         
-        console.log(deck); 
-
         computer.push(deck.shift());
         user.push(deck.shift());
         computer.push(deck.shift());
         user.push(deck.shift());
 
-
-        console.log(computer); 
-        console.log(user);
         //Get <div class="game">
         const game = document.querySelector(".game"); 
 
@@ -91,12 +87,20 @@ function main() {
         stand.addEventListener("click", function(event) {
             event.preventDefault();
             while (!(gameOver(user,computer))) {
-                computerMove(computer, deck, computerSection);
-                console.log(score(computer));
-                for (let i = 1; i < computerSection.childNodes.length; i++){
-                    computerSection.childNodes[i].setAttribute('src', '../cards/' + computer[i-1]);
+                if (score(computer) >= 18) {
+                    for (let i = 1; i < computerSection.childNodes.length; i++){
+                        computerSection.childNodes[i].setAttribute('src', '../cards/' + computer[i-1]);
+                    }
+                    computerScore.replaceChild(document.createTextNode("Computer Score - " + score(computer)), computerScore.firstChild);    
+                    break; 
                 }
-                computerScore.replaceChild(document.createTextNode("Computer Score - " + score(computer)), computerScore.firstChild);
+                else {
+                    computerMove(computer, deck, computerSection);
+                    for (let i = 1; i < computerSection.childNodes.length; i++){
+                        computerSection.childNodes[i].setAttribute('src', '../cards/' + computer[i-1]);
+                    }
+                    computerScore.replaceChild(document.createTextNode("Computer Score - " + score(computer)), computerScore.firstChild);
+                }
             }
             winner(score(user), score(computer), game, buttons);
         });
@@ -116,8 +120,6 @@ function generateDeck(array) {
             i--; 
         }
     }
-    console.log(top);
-
     for (let i = 1; i <= 52; i++){
         let card = "";
 
@@ -164,7 +166,6 @@ function shuffle(cards) {
 function display(cards, section) {
     if (section.getAttribute('class') === "computer") {
         cards.forEach((card) => {
-            console.log(card);
             const img = document.createElement('img');
             if (cards.indexOf(card) !== 0){
                 img.setAttribute('src', '../cards/card_back.png');
@@ -191,7 +192,7 @@ function score(hand) {
         if (value === "A") {
             aces++;
         } 
-        else if (value === "J" || value === "Q" || value === "K" || value === 1) {
+        else if (value === "J" || value === "Q" || value === "K" || value === '1') {
             score += 10;
         } 
         else {
