@@ -7,6 +7,6 @@
 .game section > img {
     width: 200px;
 }
-.buttons {
-    
+img:hover {
+    background: yellow;
 }

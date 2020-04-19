@@ -39,18 +39,6 @@ function main() {
 
         game.appendChild(computerSection)
 
-        //<div class="user"> 
-        const userSection = document.createElement("section"); 
-        userSection.setAttribute("class", 'user'); 
-
-        //<h3>user score</h3>
-        const userScore = document.createElement("h3"); 
-        userScore.appendChild(document.createTextNode("User Score - " + score(user)));
-        userSection.appendChild(userScore); 
-
-        game.appendChild(userSection); 
-        
-
         //Create <div class="buttons"> 
         const buttons = document.createElement("div"); 
         buttons.setAttribute("class", "buttons"); 
@@ -65,8 +53,53 @@ function main() {
 
         game.appendChild(buttons);
 
+        //<div class="user"> 
+        const userSection = document.createElement("section"); 
+        userSection.setAttribute("class", 'user'); 
+
+        //<h3>user score</h3>
+        const userScore = document.createElement("h3"); 
+        userScore.appendChild(document.createTextNode("User Score - " + score(user)));
+        userSection.appendChild(userScore); 
+
+        game.appendChild(userSection); 
+        
+
         display(computer, computerSection); 
         display(user, userSection);
+
+
+        hit.addEventListener("click", function(event) {
+            event.preventDefault(); 
+            const current = deck.shift(); 
+            user.push(current); 
+            const card = document.createElement("img"); 
+            card.setAttribute("src", "../cards/"+current); 
+            userSection.appendChild(card); 
+            userScore.replaceChild(document.createTextNode("User Score - " + score(user)), userScore.firstChild);
+
+            //if you hit and the game is over
+            if (gameOver(user,computer)) {
+                for (let i = 1; i < computerSection.childNodes.length; i++){
+                    computerSection.childNodes[i].setAttribute('src', '../cards/' + computer[i-1]);
+                }
+                computerScore.replaceChild(document.createTextNode("Computer Score - " + score(computer)), computerScore.firstChild);
+                winner(score(user), score(computer), game, buttons);
+            }
+        });
+
+        stand.addEventListener("click", function(event) {
+            event.preventDefault();
+            while (!(gameOver(user,computer))) {
+                computerMove(computer, deck, computerSection);
+                console.log(score(computer));
+                for (let i = 1; i < computerSection.childNodes.length; i++){
+                    computerSection.childNodes[i].setAttribute('src', '../cards/' + computer[i-1]);
+                }
+                computerScore.replaceChild(document.createTextNode("Computer Score - " + score(computer)), computerScore.firstChild);
+            }
+            winner(score(user), score(computer), game, buttons);
+        });
     }); 
 }
 function generateDeck(array) {
@@ -87,8 +120,13 @@ function generateDeck(array) {
 
     for (let i = 1; i <= 52; i++){
         let card = "";
+
+        //Ace (When i is 1 or 14)
+        if (i % 13 === 1) {
+            card = "A" + suits[Math.floor((i - 1)/13)] + ".png";
+        } 
         //Jack
-        if (i % 13 === 11) {
+        else if (i % 13 === 11) {
             card = "J" + suits[Math.floor((i - 1)/13)] + ".png";
         } 
         //Queen
@@ -98,11 +136,7 @@ function generateDeck(array) {
         //King
         else if (i % 13 === 0) {
             card = "K" + suits[Math.floor((i - 1)/13)] + ".png";
-        } 
-        //Ace (When i is 1 or 14)
-        else if (i % 13 === 1) {
-            card = "A" + suits[Math.floor((i - 1)/13)] + ".png";
-        } 
+        }
         //Everything else 
         else {
             card = (i%13) + suits[Math.floor((i - 1)/13)] + ".png";
@@ -113,7 +147,7 @@ function generateDeck(array) {
             cards.push(card);
         }
     }
-    // shuffle(cards);
+    shuffle(cards);
     return top.concat(cards);
 }
 function shuffle(cards) {
@@ -130,6 +164,7 @@ function shuffle(cards) {
 function display(cards, section) {
     if (section.getAttribute('class') === "computer") {
         cards.forEach((card) => {
+            console.log(card);
             const img = document.createElement('img');
             if (cards.indexOf(card) !== 0){
                 img.setAttribute('src', '../cards/card_back.png');
@@ -153,11 +188,11 @@ function score(hand) {
     let aces = 0;
     hand.forEach((card) => {
         const value = card.charAt(0);
-        if (value === "J" || value === "Q" || value === "K") {
-            score += 10;
-        } 
-        else if (value === "A") {
+        if (value === "A") {
             aces++;
+        } 
+        else if (value === "J" || value === "Q" || value === "K" || value === 1) {
+            score += 10;
         } 
         else {
             score += parseInt(value);
@@ -183,3 +218,48 @@ function score(hand) {
     }
     return score;
 }
+function gameOver(user,computer) {
+    const userScore = score(user);
+    const computerScore = score(computer);
+    if (userScore >= 21 || computerScore >= 21){
+        return true;
+    }
+    return false;
+}
+function computerMove(hand, deck, section){
+    if (score(hand) < 18) {
+        hand.push(deck.shift());
+        const img = document.createElement('img');
+        img.setAttribute('src', '../cards/card_back.png');
+        section.appendChild(img);
+    }  
+}
+function winner(userScore, computerScore, gameElement, buttons) {
+    buttons.style.display = "none"; 
+    let result = document.createElement("h3"); 
+    
+    if (userScore === 21) {
+        result.appendChild(document.createTextNode("You won!"));
+    }
+    else if (computerScore === 21) {
+        result.appendChild(document.createTextNode("Computer won!"));
+    }
+    else if (userScore > 21) {
+        result.appendChild(document.createTextNode("Computer won!"));
+    }
+    else if (computerScore > 21) {
+        result.appendChild(document.createTextNode("You won!"));
+    }
+    else if (userScore > computerScore) {
+        result.appendChild(document.createTextNode("You won!"));
+    }
+    else if (userScore < computerScore) {
+        result.appendChild(document.createTextNode("Computer won!"));
+    }
+    else {
+        result.appendChild(document.createTextNode("It's a draw!"));
+    }
+
+    gameElement.replaceChild(result, buttons);
+}
+  
