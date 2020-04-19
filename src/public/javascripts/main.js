@@ -149,19 +149,16 @@ function generateDeck(array) {
             cards.push(card);
         }
     }
-    shuffle(cards);
-    return top.concat(cards);
-}
-function shuffle(cards) {
-    let i = 0;
-    let j = 0;
+    
     let temp; 
-    for (i = cards.length - 1; i > 0; i --) {
-        j = Math.floor(Math.random() * (i + 1))
+    for (let i = cards.length - 1; i > 0; i --) {
+        let j = Math.floor(Math.random() * (i + 1))
         temp = cards[i];
         cards[i] = cards[j];
         cards[j] = temp;
     }
+    console.log(cards);
+    return top.concat(cards);
 }
 function display(cards, section) {
     if (section.getAttribute('class') === "computer") {
