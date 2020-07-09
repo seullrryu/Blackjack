@@ -4,7 +4,7 @@
   "description": "",
   "main": ".eslintrc.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build:css": "tailwind build src/public/stylesheets/temp.css -o src/public/stylesheets/tailwind.css"
   },
   "repository": {
     "type": "git",

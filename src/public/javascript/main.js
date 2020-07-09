@@ -22,7 +22,7 @@ function main() {
 
         //Get <div class="game">
         const game = document.querySelector(".game");
-
+        game.style.display = "block";
 
         //<div class="computer"> 
         const computerSection = document.createElement("section");
