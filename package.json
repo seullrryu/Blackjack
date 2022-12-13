@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/nyu-csci-ua-0480-008-spring-2020/seullrryu-homework07#readme",
   "dependencies": {
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "nodemon": "^2.0.3"
   }
 }
